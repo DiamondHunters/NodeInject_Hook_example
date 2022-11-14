@@ -22,11 +22,12 @@ jobs:
       fail-fast: false
 
     steps:
-    - name: Checkout repository 
-    - uses: actions/checkout@v2
+    - name: Checkout NodeInject 
+      uses: actions/checkout@v2
       with:
         repository: DiamondHunters/NodeInject
-    - uses: actions/checkout@v2
+    - name: Checkout repository 
+      uses: actions/checkout@v2
       with:
           path: './js'
     - name: Install Rust
