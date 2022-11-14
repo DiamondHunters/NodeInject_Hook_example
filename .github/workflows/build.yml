@@ -1,0 +1,72 @@
+name: build
+on:
+  workflow_dispatch: {}
+jobs:
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [linux, windows]
+        include:
+        - build: linux
+          os: ubuntu-18.04
+          rust: nightly
+          target: x86_64-unknown-linux-musl
+          archive-name: NodeInject-linux.tar.gz
+        - build: windows
+          os: windows-2019
+          rust: nightly-x86_64-msvc
+          target: x86_64-pc-windows-msvc
+          archive-name: NodeInject-windows.7z
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository 
+    - uses: actions/checkout@v2
+      with:
+        repository: DiamondHunters/NodeInject
+    - uses: actions/checkout@v2
+      with:
+          path: './js'
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ matrix.rust }}
+        profile: minimal
+        override: true
+        target: ${{ matrix.target }}
+
+    - name: Build binary
+      shell: bash
+      run: |
+        cp -f ./js/hook.js ./src/hooklog.js
+        cargo build --verbose --release --target ${{ matrix.target }}
+        cd ./js/license-gen
+        cargo build --verbose --release --target ${{ matrix.target }}
+        cd ../..
+      env:
+        RUST_BACKTRACE: 1
+
+    - name: Build archive
+      shell: bash
+      run: |
+        mkdir archive
+        cp LICENSE README.md archive/
+        ls -lR
+        if [ "${{ matrix.build }}" = "windows" ]; then
+          cp "./target/${{ matrix.target }}/release/node_inject.exe" ./archive/
+          cp "./js/license-gen/target/${{ matrix.target }}/release/license-gen.exe" ./archive/
+          cd archive
+          7z a "${{ matrix.archive-name }}" LICENSE README.md node_inject.exe license-gen.exe
+        else
+          cp "./target/${{ matrix.target }}/release/node_inject" ./archive/
+          cp "./js/license-gen/target/${{ matrix.target }}/release/license-gen" ./archive/
+          cd archive
+          tar -czf "${{ matrix.archive-name }}" LICENSE README.md node_inject license-gen
+        fi
+    - name: Upload archive
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ matrix.archive-name }}
+        path: archive/${{ matrix.archive-name }}
