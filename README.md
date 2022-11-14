@@ -13,7 +13,7 @@ JUST FOR LEARNING!
 #### Usage
 
 1. `git clone https://github.com/DiamondHunters/NodeInject.git`
-2. Replace `hooklog.js` with `hook.js` this repo (or use `no_embed` feature and set `NO_EMBED_HOOK_JS_PATH`to the path of `hook.js`)
+2. Replace `hooklog.js` with `hook.js` in this repo (or use `no_embed` feature and set `NO_EMBED_HOOK_JS_PATH` to the path of `hook.js`)
 3. Run `cargo build` or `cargo build --features no_embed` to build a type of executable (If you enabled `no_embed` feature, you need to copy `hook.js` to the same directory of executable)
 4. Run the executable
 
