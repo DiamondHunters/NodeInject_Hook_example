@@ -23,7 +23,7 @@ This fake license is not valid and just used for **testing**. Please do not use 
 
 #### Ability
 
-- [x] make typora to activate with the generated activation code (Test passed in version 1.4.8 on Windows,1.4.7 on Ubuntu)
+- [x] make typora to activate with the generated activation code (Test passed in version 1.5.8 on Windows,1.4.7 on Ubuntu)
 - [x] hook `console.log` to remote http server and block override
 - [x] hook `electron-fetch` for sniffing request
 - [ ] Full version compatibility (older version not using `electron-fetch` and may fail in the future)
