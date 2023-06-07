@@ -10,7 +10,7 @@ jobs:
         build: [linux, windows]
         include:
         - build: linux
-          os: ubuntu-18.04
+          os: ubuntu-latest
           rust: nightly
           target: x86_64-unknown-linux-musl
           archive-name: NodeInject-linux.tar.gz
