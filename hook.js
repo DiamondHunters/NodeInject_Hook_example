@@ -10,18 +10,6 @@ const crypto = require("crypto");
 const pubdec = crypto["publicDecrypt"];
 delete crypto["publicDecrypt"];
 let fingerprint, email, uuid, license, computerInfo = "";
-let License = ""
-crypto.publicDecrypt = function (key, buffer) {
-    log("PubDec Key:" + key);
-    log("buf: " + buffer.toString('base64'));
-    if (buffer.slice(0, 26).compare(Buffer.from("CRACKED_BY_DIAMOND_HUNTERS")) == 0) {
-        License = buffer.toString('base64');
-        let ret = buffer.toString().replace("CRACKED_BY_DIAMOND_HUNTERS", "");
-        log("backdoor data,return : " + ret);
-        return Buffer.from(ret);
-    }
-    return pubdec(key, buffer);
-};
 
 const fetch = require("electron-fetch")
 fetch_bak = fetch['default'];
@@ -42,14 +30,6 @@ fetch.default = async function fetch(url, options) {
         ret = await data.buffer();
         log('[fetch]Ret ' + ret.toString());
 
-        ret = Buffer.from('{"code":0,"retry":true,"msg":"' + Buffer.from("CRACKED_BY_DIAMOND_HUNTERS" + JSON.stringify(
-            {
-                "fingerprint": fingerprint,
-                "email": email,
-                "license": license,
-                "type": ""
-            })).toString('base64') + '"}');
-        log("replace ret: " + ret.toString());
         data.text = () => {
             return new Promise((resolve, reject) => {
                 resolve(ret.toString());
@@ -61,23 +41,7 @@ fetch.default = async function fetch(url, options) {
             });
         };
     }
-    if (url.indexOf('api/client/renew') != -1) {
-        ret = await data.buffer();
-        log('[fetch]Ret ' + ret.toString());
-
-        ret = Buffer.from('{"success":true,"code":0,"retry":true,"msg":"' + License + '"}');
-        log("replace ret: " + ret.toString());
-        data.text = () => {
-            return new Promise((resolve, reject) => {
-                resolve(ret.toString());
-            });
-        };
-        data.json = () => {
-            return new Promise((resolve, reject) => {
-                resolve(JSON.parse(ret.toString()));
-            });
-        };
-    }
+    
     return new Promise((resolve, reject) => {
         resolve(data);
     });
